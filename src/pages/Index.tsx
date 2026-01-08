@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Award, Zap, Star, Users, ImageIcon, Type, Calendar, QrCode, Download } from 'lucide-react';
+import { Award, Zap, Star, Users, ImageIcon, Type, QrCode, Download, ZoomIn, ZoomOut } from 'lucide-react';
 import { TemplateUploader } from '@/components/TemplateUploader';
 import { NamesUploader } from '@/components/NamesUploader';
 import { TextCustomizer } from '@/components/TextCustomizer';
@@ -9,6 +9,7 @@ import { CertificatePreview } from '@/components/CertificatePreview';
 import { GenerateSection } from '@/components/GenerateSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 import type { CertificateConfig, TextSettings, DateSettings, QRSettings } from '@/types/certificate';
 
 const defaultNameSettings: TextSettings = {
@@ -46,6 +47,7 @@ const Index = () => {
   });
 
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
+  const [zoom, setZoom] = useState(100);
 
   const updateConfig = <K extends keyof CertificateConfig>(
     key: K,
@@ -145,34 +147,30 @@ const Index = () => {
                   />
                 </TabsContent>
 
-                <TabsContent value="text" className="mt-0 space-y-4">
-                  <div className="quirky-card p-4">
-                    <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
-                      <Type className="w-4 h-4" />
-                      Name Text Settings
-                    </h3>
-                    <TextCustomizer
-                      settings={config.nameSettings}
-                      onSettingsChange={(settings) => updateConfig('nameSettings', settings)}
-                      canvasWidth={canvasSize.width}
-                      canvasHeight={canvasSize.height}
-                      label="Name"
-                      colorAccent="bg-quirky-pink"
-                    />
-                  </div>
+                <TabsContent value="text" className="mt-0">
+                  <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
+                    <Type className="w-4 h-4" />
+                    Name Text Settings
+                  </h3>
+                  <TextCustomizer
+                    settings={config.nameSettings}
+                    onSettingsChange={(settings) => updateConfig('nameSettings', settings)}
+                    canvasWidth={canvasSize.width}
+                    canvasHeight={canvasSize.height}
+                    label="Name"
+                    colorAccent="bg-quirky-pink"
+                  />
                 </TabsContent>
 
-                <TabsContent value="extras" className="mt-0 space-y-4">
-                  <div className="quirky-card p-4">
-                    <DateCustomizer
-                      settings={config.dateSettings}
-                      onSettingsChange={(settings) => updateConfig('dateSettings', settings)}
-                      canvasWidth={canvasSize.width}
-                      canvasHeight={canvasSize.height}
-                    />
-                  </div>
+                <TabsContent value="extras" className="mt-0 space-y-6">
+                  <DateCustomizer
+                    settings={config.dateSettings}
+                    onSettingsChange={(settings) => updateConfig('dateSettings', settings)}
+                    canvasWidth={canvasSize.width}
+                    canvasHeight={canvasSize.height}
+                  />
                   
-                  <div className="quirky-card p-4">
+                  <div className="border-t border-border pt-6">
                     <QRCustomizer
                       settings={config.qrSettings}
                       onSettingsChange={(settings) => updateConfig('qrSettings', settings)}
@@ -191,13 +189,37 @@ const Index = () => {
         </aside>
 
         {/* Center - Preview Canvas */}
-        <main className="flex-1 bg-muted/30 flex items-center justify-center p-6 overflow-auto">
-          <div className="w-full max-w-4xl">
-            <CertificatePreview
-              config={config}
-              previewName={previewName}
-              onCanvasLoad={handleCanvasLoad}
-            />
+        <main className="flex-1 bg-muted/30 flex flex-col overflow-hidden">
+          {/* Zoom Controls */}
+          <div className="flex items-center justify-center gap-2 p-3 border-b border-border bg-background/50">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setZoom(Math.max(25, zoom - 25))}
+              disabled={zoom <= 25}
+            >
+              <ZoomOut className="w-4 h-4" />
+            </Button>
+            <span className="text-sm font-medium w-16 text-center">{zoom}%</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setZoom(Math.min(200, zoom + 25))}
+              disabled={zoom >= 200}
+            >
+              <ZoomIn className="w-4 h-4" />
+            </Button>
+          </div>
+          
+          {/* Preview Area */}
+          <div className="flex-1 overflow-auto flex items-center justify-center p-6">
+            <div style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'center' }}>
+              <CertificatePreview
+                config={config}
+                previewName={previewName}
+                onCanvasLoad={handleCanvasLoad}
+              />
+            </div>
           </div>
         </main>
       </div>

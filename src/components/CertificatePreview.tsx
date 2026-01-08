@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { Eye } from 'lucide-react';
 import type { CertificateConfig } from '@/types/certificate';
 import { formatDate, generateQRCode } from '@/lib/certificate-utils';
 interface CertificatePreviewProps {
@@ -63,17 +62,12 @@ export function CertificatePreview({
     img.src = config.templateImage;
   }, [config, previewName, qrCodeUrl, onCanvasLoad]);
   if (!config.templateImage) {
-    return;
+    return (
+      <div className="text-center text-muted-foreground p-12">
+        <p className="text-lg font-medium">Upload a template to see preview</p>
+      </div>
+    );
   }
-  return <div className="quirky-card p-6">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-lg bg-quirky-yellow flex items-center justify-center border-2 border-foreground">
-          <Eye className="w-5 h-5 text-accent-foreground" />
-        </div>
-        <h3 className="text-lg font-bold">Live Preview</h3>
-      </div>
-      <div className="overflow-hidden rounded-lg border-2 border-foreground bg-card">
-        <canvas ref={canvasRef} className="w-full h-auto" />
-      </div>
-    </div>;
+  
+  return <canvas ref={canvasRef} className="max-w-full h-auto rounded-lg shadow-lg" />;
 }
