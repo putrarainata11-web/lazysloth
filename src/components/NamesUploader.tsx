@@ -1,6 +1,5 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { Users, FileText, X } from 'lucide-react';
-import { parseNamesFile } from '@/lib/certificate-utils';
 import { QuirkyButton } from '@/components/ui/quirky-button';
 
 interface NamesUploaderProps {
@@ -8,7 +7,17 @@ interface NamesUploaderProps {
   onNamesChange: (names: string[]) => void;
 }
 
+function parseNamesFromFile(content: string): string[] {
+  return content
+    .split(/[\n,;]+/)
+    .map((name) => name.trim())
+    .filter((name) => name.length > 0);
+}
+
 export function NamesUploader({ names, onNamesChange }: NamesUploaderProps) {
+  // Keep raw text separate from parsed names to allow free typing
+  const [rawText, setRawText] = useState('');
+
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -16,8 +25,9 @@ export function NamesUploader({ names, onNamesChange }: NamesUploaderProps) {
       reader.onload = (event) => {
         const content = event.target?.result;
         if (typeof content === 'string') {
-          const parsedNames = parseNamesFile(content);
+          const parsedNames = parseNamesFromFile(content);
           onNamesChange(parsedNames);
+          setRawText(parsedNames.join('\n'));
         }
       };
       reader.readAsText(file);
@@ -25,34 +35,44 @@ export function NamesUploader({ names, onNamesChange }: NamesUploaderProps) {
   }, [onNamesChange]);
 
   const handleTextChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const parsedNames = parseNamesFile(e.target.value);
+    const value = e.target.value;
+    setRawText(value);
+    
+    // Parse names on newline only for live updating
+    const parsedNames = value
+      .split('\n')
+      .map((name) => name.trim())
+      .filter((name) => name.length > 0);
     onNamesChange(parsedNames);
   }, [onNamesChange]);
 
   const removeName = (index: number) => {
-    onNamesChange(names.filter((_, i) => i !== index));
+    const newNames = names.filter((_, i) => i !== index);
+    onNamesChange(newNames);
+    setRawText(newNames.join('\n'));
   };
 
   const clearAll = () => {
     onNamesChange([]);
+    setRawText('');
   };
 
   return (
-    <div className="quirky-card p-6">
+    <div className="quirky-card p-4">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-lg bg-quirky-teal flex items-center justify-center border-2 border-foreground">
-          <Users className="w-5 h-5 text-secondary-foreground" />
+        <div className="w-8 h-8 rounded-lg bg-quirky-teal flex items-center justify-center border-2 border-foreground">
+          <Users className="w-4 h-4 text-secondary-foreground" />
         </div>
-        <h3 className="text-lg font-bold">Names List</h3>
+        <h3 className="text-sm font-bold">Names List</h3>
         {names.length > 0 && (
-          <span className="ml-auto bg-quirky-yellow text-accent-foreground text-sm font-bold px-3 py-1 rounded-full border-2 border-foreground">
-            {names.length} name{names.length !== 1 ? 's' : ''}
+          <span className="ml-auto bg-quirky-yellow text-accent-foreground text-xs font-bold px-2 py-0.5 rounded-full border-2 border-foreground">
+            {names.length}
           </span>
         )}
       </div>
 
-      <div className="space-y-4">
-        <div className="flex gap-3">
+      <div className="space-y-3">
+        <div className="flex gap-2">
           <input
             type="file"
             accept=".txt,.csv"
@@ -64,30 +84,30 @@ export function NamesUploader({ names, onNamesChange }: NamesUploaderProps) {
             <QuirkyButton variant="outline" size="sm" asChild>
               <span>
                 <FileText className="w-4 h-4" />
-                Upload File
+                Upload
               </span>
             </QuirkyButton>
           </label>
           {names.length > 0 && (
             <QuirkyButton variant="ghost" size="sm" onClick={clearAll}>
-              Clear All
+              Clear
             </QuirkyButton>
           )}
         </div>
 
         <textarea
-          placeholder="Or type/paste names here (one per line, or comma-separated)"
-          className="quirky-input w-full h-24 resize-none text-sm"
-          value={names.join('\n')}
+          placeholder="Type names here (one per line)"
+          className="quirky-input w-full h-32 resize-none text-sm"
+          value={rawText}
           onChange={handleTextChange}
         />
 
         {names.length > 0 && (
-          <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-2 bg-muted rounded-lg">
+          <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto p-2 bg-muted rounded-lg">
             {names.map((name, index) => (
               <span
                 key={index}
-                className="inline-flex items-center gap-1 bg-card px-3 py-1 rounded-full border-2 border-foreground text-sm font-medium"
+                className="inline-flex items-center gap-1 bg-card px-2 py-0.5 rounded-full border-2 border-foreground text-xs font-medium"
               >
                 {name}
                 <button
