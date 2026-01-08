@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Award, Zap, Star } from 'lucide-react';
+import { Award, Zap, Star, Users, ImageIcon, Type, Calendar, QrCode, Download } from 'lucide-react';
 import { TemplateUploader } from '@/components/TemplateUploader';
 import { NamesUploader } from '@/components/NamesUploader';
 import { TextCustomizer } from '@/components/TextCustomizer';
@@ -7,6 +7,8 @@ import { DateCustomizer } from '@/components/DateCustomizer';
 import { QRCustomizer } from '@/components/QRCustomizer';
 import { CertificatePreview } from '@/components/CertificatePreview';
 import { GenerateSection } from '@/components/GenerateSection';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import type { CertificateConfig, TextSettings, DateSettings, QRSettings } from '@/types/certificate';
 
 const defaultNameSettings: TextSettings = {
@@ -54,7 +56,6 @@ const Index = () => {
 
   const handleCanvasLoad = useCallback((width: number, height: number) => {
     setCanvasSize({ width, height });
-    // Auto-center the text positions based on canvas size
     if (!config.templateImage) {
       setConfig((prev) => ({
         ...prev,
@@ -72,27 +73,27 @@ const Index = () => {
   const previewName = config.names[0] || 'John Doe';
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="border-b-2 border-foreground bg-card">
-        <div className="container py-4">
+      <header className="border-b-2 border-foreground bg-card shrink-0">
+        <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-quirky-pink via-quirky-purple to-quirky-blue flex items-center justify-center border-2 border-foreground shadow-quirky-sm">
-                <Award className="w-6 h-6 text-primary-foreground" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-quirky-pink via-quirky-purple to-quirky-blue flex items-center justify-center border-2 border-foreground shadow-quirky-sm">
+                <Award className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight">Certify</h1>
-                <p className="text-sm text-muted-foreground">Mass certificate magic ✨</p>
+                <h1 className="text-xl font-bold tracking-tight">Certify</h1>
+                <p className="text-xs text-muted-foreground">Mass certificate magic ✨</p>
               </div>
             </div>
             <div className="hidden sm:flex items-center gap-2 text-sm">
-              <span className="inline-flex items-center gap-1 bg-quirky-yellow px-3 py-1 rounded-full border-2 border-foreground font-medium">
-                <Zap className="w-4 h-4" />
+              <span className="inline-flex items-center gap-1 bg-quirky-yellow px-3 py-1 rounded-full border-2 border-foreground font-medium text-xs">
+                <Zap className="w-3 h-3" />
                 Fast & Free
               </span>
-              <span className="inline-flex items-center gap-1 bg-quirky-teal text-secondary-foreground px-3 py-1 rounded-full border-2 border-foreground font-medium">
-                <Star className="w-4 h-4" />
+              <span className="inline-flex items-center gap-1 bg-quirky-teal text-secondary-foreground px-3 py-1 rounded-full border-2 border-foreground font-medium text-xs">
+                <Star className="w-3 h-3" />
                 No signup
               </span>
             </div>
@@ -100,92 +101,106 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container py-8">
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Left Column - Configuration */}
-          <div className="space-y-6">
-            {/* Upload Section */}
-            <TemplateUploader
-              templateImage={config.templateImage}
-              onTemplateChange={handleTemplateChange}
-            />
+      {/* Main Content - Canva-style layout */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left Sidebar - Tools */}
+        <aside className="w-80 border-r-2 border-foreground bg-card shrink-0 flex flex-col">
+          <Tabs defaultValue="template" className="flex flex-col h-full">
+            <TabsList className="grid grid-cols-5 gap-1 p-2 bg-muted/50 rounded-none border-b-2 border-foreground shrink-0">
+              <TabsTrigger value="template" className="flex flex-col items-center gap-1 p-2 data-[state=active]:bg-quirky-pink data-[state=active]:text-accent-foreground rounded-lg">
+                <ImageIcon className="w-4 h-4" />
+                <span className="text-[10px] font-medium">Template</span>
+              </TabsTrigger>
+              <TabsTrigger value="names" className="flex flex-col items-center gap-1 p-2 data-[state=active]:bg-quirky-teal data-[state=active]:text-secondary-foreground rounded-lg">
+                <Users className="w-4 h-4" />
+                <span className="text-[10px] font-medium">Names</span>
+              </TabsTrigger>
+              <TabsTrigger value="text" className="flex flex-col items-center gap-1 p-2 data-[state=active]:bg-quirky-yellow data-[state=active]:text-accent-foreground rounded-lg">
+                <Type className="w-4 h-4" />
+                <span className="text-[10px] font-medium">Text</span>
+              </TabsTrigger>
+              <TabsTrigger value="extras" className="flex flex-col items-center gap-1 p-2 data-[state=active]:bg-quirky-purple data-[state=active]:text-primary-foreground rounded-lg">
+                <QrCode className="w-4 h-4" />
+                <span className="text-[10px] font-medium">Extras</span>
+              </TabsTrigger>
+              <TabsTrigger value="generate" className="flex flex-col items-center gap-1 p-2 data-[state=active]:bg-quirky-blue data-[state=active]:text-primary-foreground rounded-lg">
+                <Download className="w-4 h-4" />
+                <span className="text-[10px] font-medium">Export</span>
+              </TabsTrigger>
+            </TabsList>
 
-            <NamesUploader
-              names={config.names}
-              onNamesChange={(names) => updateConfig('names', names)}
-            />
-
-            {/* Customization Section */}
-            {config.templateImage && (
-              <div className="quirky-card p-6 space-y-6">
-                <h3 className="text-lg font-bold flex items-center gap-2">
-                  🎨 Customize Your Certificates
-                </h3>
-
-                <TextCustomizer
-                  settings={config.nameSettings}
-                  onSettingsChange={(settings) => updateConfig('nameSettings', settings)}
-                  canvasWidth={canvasSize.width}
-                  canvasHeight={canvasSize.height}
-                  label="Name Text"
-                  colorAccent="bg-quirky-pink"
-                />
-
-                <div className="border-t-2 border-dashed border-muted pt-6">
-                  <DateCustomizer
-                    settings={config.dateSettings}
-                    onSettingsChange={(settings) => updateConfig('dateSettings', settings)}
-                    canvasWidth={canvasSize.width}
-                    canvasHeight={canvasSize.height}
+            <ScrollArea className="flex-1">
+              <div className="p-4">
+                <TabsContent value="template" className="mt-0">
+                  <TemplateUploader
+                    templateImage={config.templateImage}
+                    onTemplateChange={handleTemplateChange}
                   />
-                </div>
+                </TabsContent>
 
-                <div className="border-t-2 border-dashed border-muted pt-6">
-                  <QRCustomizer
-                    settings={config.qrSettings}
-                    onSettingsChange={(settings) => updateConfig('qrSettings', settings)}
-                    canvasWidth={canvasSize.width}
-                    canvasHeight={canvasSize.height}
+                <TabsContent value="names" className="mt-0">
+                  <NamesUploader
+                    names={config.names}
+                    onNamesChange={(names) => updateConfig('names', names)}
                   />
-                </div>
+                </TabsContent>
+
+                <TabsContent value="text" className="mt-0 space-y-4">
+                  <div className="quirky-card p-4">
+                    <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
+                      <Type className="w-4 h-4" />
+                      Name Text Settings
+                    </h3>
+                    <TextCustomizer
+                      settings={config.nameSettings}
+                      onSettingsChange={(settings) => updateConfig('nameSettings', settings)}
+                      canvasWidth={canvasSize.width}
+                      canvasHeight={canvasSize.height}
+                      label="Name"
+                      colorAccent="bg-quirky-pink"
+                    />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="extras" className="mt-0 space-y-4">
+                  <div className="quirky-card p-4">
+                    <DateCustomizer
+                      settings={config.dateSettings}
+                      onSettingsChange={(settings) => updateConfig('dateSettings', settings)}
+                      canvasWidth={canvasSize.width}
+                      canvasHeight={canvasSize.height}
+                    />
+                  </div>
+                  
+                  <div className="quirky-card p-4">
+                    <QRCustomizer
+                      settings={config.qrSettings}
+                      onSettingsChange={(settings) => updateConfig('qrSettings', settings)}
+                      canvasWidth={canvasSize.width}
+                      canvasHeight={canvasSize.height}
+                    />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="generate" className="mt-0">
+                  <GenerateSection config={config} />
+                </TabsContent>
               </div>
-            )}
-          </div>
+            </ScrollArea>
+          </Tabs>
+        </aside>
 
-          {/* Right Column - Preview & Generate */}
-          <div className="space-y-6">
-            <div className="lg:sticky lg:top-6 space-y-6">
-              <CertificatePreview
-                config={config}
-                previewName={previewName}
-                onCanvasLoad={handleCanvasLoad}
-              />
-
-              <GenerateSection config={config} />
-            </div>
+        {/* Center - Preview Canvas */}
+        <main className="flex-1 bg-muted/30 flex items-center justify-center p-6 overflow-auto">
+          <div className="w-full max-w-4xl">
+            <CertificatePreview
+              config={config}
+              previewName={previewName}
+              onCanvasLoad={handleCanvasLoad}
+            />
           </div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t-2 border-foreground bg-card mt-auto">
-        <div className="container py-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-            <p>Made with 💖 for certificate enthusiasts everywhere</p>
-            <div className="flex items-center gap-4">
-              <span className="inline-flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-quirky-teal animate-pulse" />
-                100% browser-based
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-quirky-pink animate-pulse" />
-                No data uploaded
-              </span>
-            </div>
-          </div>
-        </div>
-      </footer>
+        </main>
+      </div>
     </div>
   );
 };
