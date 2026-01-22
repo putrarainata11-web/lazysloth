@@ -44,7 +44,7 @@ export function DateCustomizer({
       </div>
 
       {settings.enabled && (
-        <div className="grid gap-5 pl-11">
+        <div className="grid gap-5">
           {/* Date Format */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Date Format</label>

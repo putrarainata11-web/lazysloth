@@ -171,8 +171,8 @@ export default function TemplateEditor() {
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar */}
         <aside className="w-80 border-r-2 border-foreground bg-card shrink-0 flex flex-col">
-          <Tabs defaultValue="template" className="flex flex-col h-full">
-            <TabsList className="grid grid-cols-4 gap-1 p-2 bg-muted/50 rounded-none border-b-2 border-foreground shrink-0">
+          <Tabs defaultValue="template" className="flex flex-col h-ful">
+            <TabsList className="grid grid-cols-4 gap-1 p-2 bg-muted/50 rounded-none border-b-2 border-foreground shrink-0 h-fit">
               <TabsTrigger value="template" className="flex flex-col items-center gap-1 p-2 data-[state=active]:bg-quirky-pink data-[state=active]:text-accent-foreground rounded-lg">
                 <ImageIcon className="w-4 h-4" />
                 <span className="text-[10px] font-medium">Template</span>
@@ -217,7 +217,7 @@ export default function TemplateEditor() {
                   />
                 </TabsContent>
 
-                <TabsContent value="extras" className="mt-0 space-y-8">
+                <TabsContent value="extras" className="space-y-8">
                   <DateCustomizer
                     settings={dateSettings}
                     onSettingsChange={setDateSettings}

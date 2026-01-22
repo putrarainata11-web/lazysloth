@@ -278,7 +278,7 @@ export default function Landing() {
       </section>
 
       {/* Customer Reviews */}
-      <CustomerReviews />
+      {/* <CustomerReviews /> */}
 
       {/* Pricing Teaser */}
       <section className="py-20 px-4">
