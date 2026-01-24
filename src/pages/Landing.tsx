@@ -9,6 +9,7 @@ import { LazySlothLogo } from '@/components/LazySlothLogo';
 import { InteractivePlayground } from '@/components/landing/InteractivePlayground';
 import { CustomerReviews } from '@/components/landing/CustomerReviews';
 import { AnimateOnScroll, FloatingDecoration } from '@/components/landing/ScrollAnimations';
+import { PricingSection } from '@/components/landing/PricingSection';
 
 const painPoints = [
   { icon: Copy, text: 'Copy-pasting names is slow', rotation: '-1deg' },
@@ -280,41 +281,7 @@ export default function Landing() {
       {/* Customer Reviews */}
       {/* <CustomerReviews /> */}
 
-      {/* Pricing Teaser */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-3xl">
-          <AnimateOnScroll animation="scale">
-            <div className="bg-card border-2 border-foreground rounded-3xl p-8 md:p-12 shadow-quirky-lg text-center relative overflow-hidden">
-              <div className="absolute -top-6 -right-6 w-24 h-24 bg-primary/20 rounded-full blur-2xl" />
-              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-quirky-teal/20 rounded-full blur-2xl" />
-              
-              <h3 className="text-3xl md:text-4xl font-bold mb-4 relative">
-                Simple pricing that <span className="text-primary">grows with you</span>
-              </h3>
-              
-              <p className="text-muted-foreground mb-8 relative">
-                Start free. Upgrade when you need more.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center relative">
-                <div className="bg-muted/50 border-2 border-foreground rounded-xl p-6 flex-1 max-w-xs mx-auto sm:mx-0">
-                  <div className="text-3xl mb-2">🆓</div>
-                  <h4 className="font-bold text-lg mb-1">Free Forever</h4>
-                  <p className="text-sm text-muted-foreground">Basic generation features</p>
-                </div>
-                <div className="bg-primary/10 border-2 border-foreground rounded-xl p-6 flex-1 max-w-xs mx-auto sm:mx-0 relative">
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary px-3 py-1 rounded-full text-xs font-bold border-2 border-foreground">
-                    Popular
-                  </div>
-                  <div className="text-3xl mb-2">🚀</div>
-                  <h4 className="font-bold text-lg mb-1">Pay As You Go</h4>
-                  <p className="text-sm text-muted-foreground">Unlimited + advanced features</p>
-                </div>
-              </div>
-            </div>
-          </AnimateOnScroll>
-        </div>
-      </section>
+      <PricingSection/>
 
       {/* Final CTA */}
       <section className="py-20 px-4 bg-gradient-to-br from-primary/20 via-quirky-teal/10 to-quirky-purple/20 relative">
